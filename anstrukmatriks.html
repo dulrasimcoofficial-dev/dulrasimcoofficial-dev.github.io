@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid System Analyzer - Enhanced</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #dee2e6;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            background: #f8f9fa;
+            border: none;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .tab:hover {
+            background: #e9ecef;
+        }
+        
+        .tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border 0.3s;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 5px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(108, 117, 125, 0.4);
+        }
+        
+        .element-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .element-card h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .results {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.85em;
+            overflow-x: auto;
+            display: block;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .matrix-table th, .matrix-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: right;
+            white-space: nowrap;
+            min-width: 120px;
+        }
+        
+        .matrix-table th {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .matrix-table tr:nth-child(even) {
+            background: #f2f2f2;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left: 4px solid #17a2b8;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+        
+        .loading-card {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .loading-card.active {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .summary-item {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .summary-item h3 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .summary-item p {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .element-matrices {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px solid #667eea;
+        }
+        
+        .element-matrices h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .diagram-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        canvas {
+            width: 100%;
+            max-width: 800px;
+            height: 300px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        
+        .force-card {
+            background: #fff3cd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #ffc107;
+        }
+        
+        .force-card h5 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏗️ Grid System Analyzer</h1>
+            <p>Analisis Struktur Grid dengan Metode Matriks Kekakuan + Gaya Dalam & Diagram</p>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('elements')">1. Data Elemen</button>
+            <button class="tab" onclick="showTab('boundary')">2. Boundary Conditions</button>
+            <button class="tab" onclick="showTab('loading')">3. Pembebanan</button>
+            <button class="tab" onclick="showTab('results')">4. Hasil</button>
+        </div>
+        
+        <!-- Tab 1: Data Elemen -->
+        <div id="elements" class="tab-content active">
+            <h2>Input Data Elemen</h2>
+            <div class="alert alert-info">
+                <strong>Info:</strong> Input b dan h, nilai β, A, Ix, Iy akan dihitung otomatis.
+            </div>
+            
+            <div class="form-group">
+                <label>Jumlah Elemen:</label>
+                <input type="number" id="numElements" value="5" min="1" onchange="generateElementInputs()">
+            </div>
+            
+            <button class="btn btn-primary" onclick="generateElementInputs()">Generate Form</button>
+            
+            <div id="elementInputs"></div>
+            
+            <button class="btn btn-success" onclick="saveElements()">Simpan & Lanjut →</button>
+        </div>
+        
+        <!-- Tab 2: Boundary Conditions -->
+        <div id="boundary" class="tab-content">
+            <h2>Boundary Conditions</h2>
+            <div class="alert alert-info">
+                <strong>Info:</strong> Tentukan tipe tumpuan untuk setiap node.
+            </div>
+            
+            <div id="boundaryInputs"></div>
+            
+            <button class="btn btn-success" onclick="saveBoundary()">Simpan & Lanjut →</button>
+        </div>
+        
+        <!-- Tab 3: Pembebanan -->
+        <div id="loading" class="tab-content">
+            <h2>Pembebanan</h2>
+            <div id="loadingInputs"></div>
+            
+            <button class="btn btn-success" onclick="saveLoading()">Simpan & Lanjut →</button>
+        </div>
+        
+        <!-- Tab 4: Hasil -->
+        <div id="results" class="tab-content">
+            <h2>Hasil Analisis</h2>
+            
+            <div class="loading-card" id="loadingCard">
+                <div class="spinner"></div>
+                <p>Sedang menghitung...</p>
+            </div>
+            
+            <button class="btn btn-primary" onclick="runAnalysis()">🚀 Jalankan Analisis</button>
+            <button class="btn btn-secondary" onclick="exportResults()">📥 Export ke PDF</button>
+            
+            <div id="resultsContent"></div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        let elements = [];
+        let boundaryConditions = {};
+        let loadings = [];
+        let analysisResults = null;
+        
+        const THRESHOLD = 1e-10;
+        
+        function cleanNumber(num) {
+            return Math.abs(num) < THRESHOLD ? 0 : num;
+        }
+        
+        function formatNumber(num) {
+            num = cleanNumber(num);
+            if (num === 0) return '0';
+            
+            const absNum = Math.abs(num);
+            
+            if (absNum >= 1e10 || (absNum < 1e-6 && absNum !== 0)) {
+                return num.toExponential(6).replace('.', ',');
+            }
+            
+            const str = num.toFixed(10);
+            const parts = str.split('.');
+            
+            let intPart = parts[0];
+            intPart = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            
+            let decPart = parts[1].replace(/0+$/, '');
+            
+            if (decPart === '') {
+                return intPart;
+            }
+            
+            return intPart + ',' + decPart;
+        }
+        
+        function getDOFLabel(dofIdx, dofMap, sortedNodes) {
+            for (let node of sortedNodes) {
+                const dofs = dofMap[node];
+                if (dofs.theta_x === dofIdx) return `θx${node}`;
+                if (dofs.theta_y === dofIdx) return `θy${node}`;
+                if (dofs.w === dofIdx) return `w${node}`;
+            }
+            return dofIdx.toString();
+        }
+        
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        function generateElementInputs() {
+            const num = parseInt(document.getElementById('numElements').value);
+            const container = document.getElementById('elementInputs');
+            container.innerHTML = '';
+            
+            const defaults = [
+                {node_i: 1, node_j: 2, alpha: 90, L: 2.5, b: 0.4, h: 0.6},
+                {node_i: 2, node_j: 3, alpha: 90, L: 2.5, b: 0.4, h: 0.6},
+                {node_i: 4, node_j: 5, alpha: 90, L: 2.5, b: 0.4, h: 0.6},
+                {node_i: 5, node_j: 6, alpha: 90, L: 2.5, b: 0.4, h: 0.6},
+                {node_i: 2, node_j: 5, alpha: 0, L: 4, b: 0.4, h: 0.5}
+            ];
+            
+            for (let i = 0; i < num; i++) {
+                const def = defaults[i] || {node_i: i+1, node_j: i+2, alpha: 90, L: 2.5, b: 0.4, h: 0.6};
+                const card = document.createElement('div');
+                card.className = 'element-card';
+                card.innerHTML = `
+                    <h4>Elemen ${i+1}</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Node i:</label>
+                            <input type="number" id="elem${i}_node_i" value="${def.node_i}">
+                        </div>
+                        <div class="form-group">
+                            <label>Node j:</label>
+                            <input type="number" id="elem${i}_node_j" value="${def.node_j}">
+                        </div>
+                        <div class="form-group">
+                            <label>Alpha (°):</label>
+                            <input type="number" id="elem${i}_alpha" value="${def.alpha}" step="0.1">
+                        </div>
+                        <div class="form-group">
+                            <label>L (m):</label>
+                            <input type="number" id="elem${i}_L" value="${def.L}" step="0.1">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>b (m):</label>
+                            <input type="number" id="elem${i}_b" value="${def.b}" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>h (m):</label>
+                            <input type="number" id="elem${i}_h" value="${def.h}" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label>G (kN/m²):</label>
+                            <input type="number" id="elem${i}_G" value="8600000">
+                        </div>
+                        <div class="form-group">
+                            <label>E (kN/m²):</label>
+                            <input type="number" id="elem${i}_E" value="20000000">
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            }
+        }
+        
+        function calculateBeta(b, h) {
+            return (1/3) - 0.21 * (b/h) * (1 - Math.pow(b, 4)/(12 * Math.pow(h, 4)));
+        }
+        
+        function saveElements() {
+            const num = parseInt(document.getElementById('numElements').value);
+            elements = [];
+            
+            for (let i = 0; i < num; i++) {
+                const b = parseFloat(document.getElementById(`elem${i}_b`).value);
+                const h = parseFloat(document.getElementById(`elem${i}_h`).value);
+                const beta = calculateBeta(b, h);
+                const A = b * h;
+                const Ix = beta * h * Math.pow(b, 3);
+                const Iy = (1/12) * b * Math.pow(h, 3);
+                
+                elements.push({
+                    id: i + 1,
+                    node_i: parseInt(document.getElementById(`elem${i}_node_i`).value),
+                    node_j: parseInt(document.getElementById(`elem${i}_node_j`).value),
+                    alpha: parseFloat(document.getElementById(`elem${i}_alpha`).value),
+                    L: parseFloat(document.getElementById(`elem${i}_L`).value),
+                    b: b,
+                    h: h,
+                    beta: beta,
+                    A: A,
+                    Ix: Ix,
+                    Iy: Iy,
+                    G: parseFloat(document.getElementById(`elem${i}_G`).value),
+                    E: parseFloat(document.getElementById(`elem${i}_E`).value)
+                });
+            }
+            
+            generateBoundaryInputs();
+            showTab('boundary');
+        }
+        
+        function generateBoundaryInputs() {
+            const nodes = new Set();
+            elements.forEach(e => {
+                nodes.add(e.node_i);
+                nodes.add(e.node_j);
+            });
+            
+            const container = document.getElementById('boundaryInputs');
+            container.innerHTML = '';
+            
+            const fixedNodes = [1, 3, 4, 6];
+            
+            Array.from(nodes).sort((a, b) => a - b).forEach(node => {
+                const card = document.createElement('div');
+                card.className = 'element-card';
+                const isFixed = fixedNodes.includes(node);
+                card.innerHTML = `
+                    <h4>Node ${node}</h4>
+                    <div class="form-group">
+                        <label>Tipe Tumpuan:</label>
+                        <select id="bc_node${node}">
+                            <option value="fixed" ${isFixed ? 'selected' : ''}>Jepit (Fixed)</option>
+                            <option value="free" ${!isFixed ? 'selected' : ''}>Bebas (Free)</option>
+                        </select>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+        
+        function saveBoundary() {
+            const nodes = new Set();
+            elements.forEach(e => {
+                nodes.add(e.node_i);
+                nodes.add(e.node_j);
+            });
+            
+            boundaryConditions = {};
+            nodes.forEach(node => {
+                const type = document.getElementById(`bc_node${node}`).value;
+                boundaryConditions[node] = {
+                    theta_x: type,
+                    theta_y: type,
+                    w: type
+                };
+            });
+            
+            generateLoadingInputs();
+            showTab('loading');
+        }
+        
+        function generateLoadingInputs() {
+            const container = document.getElementById('loadingInputs');
+            container.innerHTML = '';
+            
+            elements.forEach((elem, i) => {
+                const card = document.createElement('div');
+                card.className = 'element-card';
+                const defaultQ = elem.id === 5 ? -20 : 0;
+                const defaultP = elem.id === 5 ? -10 : 0;
+                card.innerHTML = `
+                    <h4>Elemen ${elem.id} (Node ${elem.node_i} → ${elem.node_j})</h4>
+                    <div class="form-group">
+                        <label>Beban Terdistribusi q (kN/m):</label>
+                        <input type="number" id="load${i}_q" value="${defaultQ}" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label>Beban Terpusat P (kN):</label>
+                        <input type="number" id="load${i}_P" value="${defaultP}" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label>Posisi P dari Node ${elem.node_i} (m):</label>
+                        <input type="number" id="load${i}_a" value="${elem.L/2}" step="0.1" max="${elem.L}">
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+        
+        function saveLoading() {
+            loadings = [];
+            
+            elements.forEach((elem, i) => {
+                const q = parseFloat(document.getElementById(`load${i}_q`).value);
+                const P = parseFloat(document.getElementById(`load${i}_P`).value);
+                const a = parseFloat(document.getElementById(`load${i}_a`).value);
+                
+                loadings.push({
+                    element_id: elem.id,
+                    distributed: q !== 0 ? q : null,
+                    concentrated: P !== 0 ? [{value: P, position: a}] : []
+                });
+            });
+            
+            showTab('results');
+        }
+        
+        function runAnalysis() {
+            document.getElementById('loadingCard').classList.add('active');
+            document.getElementById('resultsContent').innerHTML = '';
+            
+            setTimeout(() => {
+                try {
+                    const results = performAnalysis();
+                    analysisResults = results;
+                    displayResults(results);
+                } catch(error) {
+                    alert('Error: ' + error.message);
+                    console.error(error);
+                }
+                document.getElementById('loadingCard').classList.remove('active');
+            }, 500);
+        }
+        
+        function performAnalysis() {
+            const nodes = new Set();
+            elements.forEach(e => {
+                nodes.add(e.node_i);
+                nodes.add(e.node_j);
+            });
+            const sortedNodes = Array.from(nodes).sort((a, b) => a - b);
+            
+            const dofMap = {};
+            let dofCounter = 0;
+            sortedNodes.forEach(node => {
+                dofMap[node] = {
+                    theta_x: dofCounter++,
+                    theta_y: dofCounter++,
+                    w: dofCounter++
+                };
+            });
+            
+            const totalDofs = sortedNodes.length * 3;
+            
+            const freeDofs = [];
+            const fixedDofs = [];
+            sortedNodes.forEach(node => {
+                const bc = boundaryConditions[node];
+                if (bc.theta_x === 'free') freeDofs.push(dofMap[node].theta_x);
+                else fixedDofs.push(dofMap[node].theta_x);
+                if (bc.theta_y === 'free') freeDofs.push(dofMap[node].theta_y);
+                else fixedDofs.push(dofMap[node].theta_y);
+                if (bc.w === 'free') freeDofs.push(dofMap[node].w);
+                else fixedDofs.push(dofMap[node].w);
+            });
+            
+            let Kg = math.zeros(totalDofs, totalDofs);
+            let F = math.zeros(totalDofs);
+            
+            const elementMatrices = [];
+            
+            elements.forEach((elem, idx) => {
+                const T = getTransformationMatrix(elem.alpha);
+                const kl = getLocalStiffness(elem);
+                let kg = math.multiply(math.transpose(T), math.multiply(kl, T));
+                
+                kg = cleanMatrix(kg);
+                
+                elementMatrices.push({
+                    elementId: elem.id,
+                    kl: cleanMatrix(kl),
+                    kg: kg,
+                    T: T
+                });
+                
+                const dofElem = [
+                    dofMap[elem.node_i].theta_x,
+                    dofMap[elem.node_i].theta_y,
+                    dofMap[elem.node_i].w,
+                    dofMap[elem.node_j].theta_x,
+                    dofMap[elem.node_j].theta_y,
+                    dofMap[elem.node_j].w
+                ];
+                
+                for (let i = 0; i < 6; i++) {
+                    for (let j = 0; j < 6; j++) {
+                        const currentVal = Kg.get([dofElem[i], dofElem[j]]);
+                        const newVal = cleanNumber(currentVal + kg.get([i, j]));
+                        Kg.set([dofElem[i], dofElem[j]], newVal);
+                    }
+                }
+                
+                const loading = loadings[idx];
+                const F_local = getFixedEndActions(elem, loading);
+                const F_global = math.multiply(math.transpose(T), F_local);
+                
+                for (let i = 0; i < 6; i++) {
+                    const currentVal = F.get([dofElem[i]]);
+                    const newVal = cleanNumber(currentVal + F_global.get([i]));
+                    F.set([dofElem[i]], newVal);
+                }
+            });
+            
+            Kg = cleanMatrix(Kg);
+            F = cleanVector(F);
+            
+            const Kg_ff = math.subset(Kg, math.index(freeDofs, freeDofs));
+            const F_f = math.subset(F, math.index(freeDofs));
+            const d_f = math.lusolve(Kg_ff, F_f);
+            
+            let d = math.zeros(totalDofs);
+            freeDofs.forEach((dof, i) => {
+                d.set([dof], cleanNumber(d_f.get([i, 0])));
+            });
+            
+            const Kg_sf = math.subset(Kg, math.index(fixedDofs, freeDofs));
+            const d_f_reshaped = math.reshape(math.subset(d, math.index(freeDofs)), [freeDofs.length, 1]);
+            const F_s = math.multiply(Kg_sf, d_f_reshaped);
+            
+            const F_s_clean = cleanVector(F_s);
+            
+            // Hitung gaya dalam
+            const internalForces = [];
+            elements.forEach((elem, idx) => {
+                const nodeI = elem.node_i;
+                const nodeJ = elem.node_j;
+                
+                const dI = [
+                    d.get([dofMap[nodeI].theta_x]),
+                    d.get([dofMap[nodeI].theta_y]),
+                    d.get([dofMap[nodeI].w])
+                ];
+                const dJ = [
+                    d.get([dofMap[nodeJ].theta_x]),
+                    d.get([dofMap[nodeJ].theta_y]),
+                    d.get([dofMap[nodeJ].w])
+                ];
+                
+                const d_global = [...dI, ...dJ];
+                
+                const T = elementMatrices[idx].T;
+                const d_local = math.multiply(T, d_global);
+                
+                const kl = elementMatrices[idx].kl;
+                const f_local = math.multiply(kl, d_local);
+                
+                internalForces.push({
+                    elementId: elem.id,
+                    Mx_i: cleanNumber(f_local.get([0])),
+                    My_i: cleanNumber(f_local.get([1])),
+                    Vy_i: cleanNumber(f_local.get([2])),
+                    Mx_j: cleanNumber(f_local.get([3])),
+                    My_j: cleanNumber(f_local.get([4])),
+                    Vy_j: cleanNumber(f_local.get([5]))
+                });
+            });
+            
+            return {
+                Kg: Kg,
+                F: F,
+                d: d,
+                F_s: F_s_clean,
+                dofMap: dofMap,
+                sortedNodes: sortedNodes,
+                freeDofs: freeDofs,
+                fixedDofs: fixedDofs,
+                totalDofs: totalDofs,
+                elementMatrices: elementMatrices,
+                internalForces: internalForces
+            };
+        }
+        
+        function cleanMatrix(matrix) {
+            const size = matrix.size();
+            const cleaned = math.clone(matrix);
+            for (let i = 0; i < size[0]; i++) {
+                for (let j = 0; j < size[1]; j++) {
+                    cleaned.set([i, j], cleanNumber(matrix.get([i, j])));
+                }
+            }
+            return cleaned;
+        }
+        
+        function cleanVector(vector) {
+            const size = vector.size()[0];
+            const cleaned = math.clone(vector);
+            for (let i = 0; i < size; i++) {
+                const idx = vector.size().length === 1 ? [i] : [i, 0];
+                cleaned.set(idx, cleanNumber(vector.get(idx)));
+            }
+            return cleaned;
+        }
+        
+        function getTransformationMatrix(alpha) {
+            const rad = alpha * Math.PI / 180;
+            const c = Math.cos(rad);
+            const s = Math.sin(rad);
+            
+            return math.matrix([
+                [c, s, 0, 0, 0, 0],
+                [-s, c, 0, 0, 0, 0],
+                [0, 0, 1, 0, 0, 0],
+                [0, 0, 0, c, s, 0],
+                [0, 0, 0, -s, c, 0],
+                [0, 0, 0, 0, 0, 1]
+            ]);
+        }
+        
+        function getLocalStiffness(elem) {
+            const L = elem.L;
+            const E = elem.E;
+            const G = elem.G;
+            const Ix = elem.Ix;
+            const Iy = elem.Iy;
+            
+            const kl = math.zeros(6, 6);
+            
+            kl.set([0, 0], G * Ix / L);
+            kl.set([0, 3], -G * Ix / L);
+            
+            kl.set([1, 1], 4 * E * Iy / L);
+            kl.set([1, 2], -6 * E * Iy / (L**2));
+            kl.set([1, 4], 2 * E * Iy / L);
+            kl.set([1, 5], 6 * E * Iy / (L**2));
+            
+            kl.set([2, 1], -6 * E * Iy / (L**2));
+            kl.set([2, 2], 12 * E * Iy / (L**3));
+            kl.set([2, 4], -6 * E * Iy / (L**2));
+            kl.set([2, 5], -12 * E * Iy / (L**3));
+            
+            kl.set([3, 0], -G * Ix / L);
+            kl.set([3, 3], G * Ix / L);
+            
+            kl.set([4, 1], 2 * E * Iy / L);
+            kl.set([4, 2], -6 * E * Iy / (L**2));
+            kl.set([4, 4], 4 * E * Iy / L);
+            kl.set([4, 5], 6 * E * Iy / (L**2));
+            
+            kl.set([5, 1], 6 * E * Iy / (L**2));
+            kl.set([5, 2], -12 * E * Iy / (L**3));
+            kl.set([5, 4], 6 * E * Iy / (L**2));
+            kl.set([5, 5], 12 * E * Iy / (L**3));
+            
+            return kl;
+        }
+        
+        function getFixedEndActions(elem, loading) {
+            const L = elem.L;
+            const F_local = [0, 0, 0, 0, 0, 0];
+            
+            if (loading.distributed !== null) {
+                const q = loading.distributed;
+                F_local[1] = -q * L**2 / 12;
+                F_local[2] = -q * L / 2;
+                F_local[4] = q * L**2 / 12;
+                F_local[5] = -q * L / 2;
+            }
+            
+            loading.concentrated.forEach(load => {
+                const P = load.value;
+                const a = load.position;
+                const b = L - a;
+                
+                if (a === 0) {
+                    F_local[2] += P;
+                } else if (a === L) {
+                    F_local[5] += P;
+                } else {
+                    F_local[1] += -P * a * b**2 / L**2;
+                    F_local[2] += -P * b / L;
+                    F_local[4] += P * a**2 * b / L**2;
+                    F_local[5] += -P * a / L;
+                }
+            });
+            
+            return math.matrix(F_local);
+        }
+        
+        function displayResults(results) {
+            const container = document.getElementById('resultsContent');
+            
+            let html = '<div class="alert alert-success">✅ Analisis berhasil!</div>';
+            
+            html += '<div class="summary-grid">';
+            html += `<div class="summary-item"><h3>${results.totalDofs}</h3><p>Total DOF</p></div>`;
+            html += `<div class="summary-item"><h3>${results.freeDofs.length}</h3><p>DOF Bebas</p></div>`;
+            html += `<div class="summary-item"><h3>${results.fixedDofs.length}</h3><p>DOF Terkekang</p></div>`;
+            html += `<div class="summary-item"><h3>${elements.length}</h3><p>Jumlah Elemen</p></div>`;
+            html += '</div>';
+            
+            html += '<div class="results"><h3>📐 Properti Elemen</h3>';
+            html += '<table class="matrix-table"><thead><tr><th>ID</th><th>Node i-j</th><th>α(°)</th><th>L(m)</th><th>β</th><th>A(m²)</th><th>Ix(m⁴)</th><th>Iy(m⁴)</th></tr></thead><tbody>';
+            
+            elements.forEach(elem => {
+                html += `<tr>
+                    <td>${elem.id}</td>
+                    <td>${elem.node_i}-${elem.node_j}</td>
+                    <td>${formatNumber(elem.alpha)}</td>
+                    <td>${formatNumber(elem.L)}</td>
+                    <td>${formatNumber(elem.beta)}</td>
+                    <td>${formatNumber(elem.A)}</td>
+                    <td>${formatNumber(elem.Ix)}</td>
+                    <td>${formatNumber(elem.Iy)}</td>
+                </tr>`;
+            });
+            html += '</tbody></table></div>';
+            
+            // Matriks dengan notasi simbol
+            results.elementMatrices.forEach(({elementId, kl, kg}) => {
+                const elem = elements.find(e => e.id === elementId);
+                html += `<div class="element-matrices">`;
+                html += `<h4>🔷 Elemen ${elementId} (Node ${elem.node_i}→${elem.node_j}) - Matriks Kekakuan Lokal (kl)</h4>`;
+                html += '<table class="matrix-table"><thead><tr><th></th>';
+                
+                const labels = [`θx<sub>${elem.node_i}</sub>`, `θy<sub>${elem.node_i}</sub>`, `w<sub>${elem.node_i}</sub>`, 
+                               `θx<sub>${elem.node_j}</sub>`, `θy<sub>${elem.node_j}</sub>`, `w<sub>${elem.node_j}</sub>`];
+                
+                labels.forEach(label => {
+                    html += `<th>${label}</th>`;
+                });
+                html += '</tr></thead><tbody>';
+                
+                for (let i = 0; i < 6; i++) {
+                    html += `<tr><td><strong>${labels[i]}</strong></td>`;
+                    for (let j = 0; j < 6; j++) {
+                        const val = kl.get([i, j]);
+                        html += `<td>${formatNumber(val)}</td>`;
+                    }
+                    html += '</tr>';
+                }
+                html += '</tbody></table>';
+                
+                html += `<h4>🔶 Elemen ${elementId} - Matriks Kekakuan Global (kg)</h4>`;
+                html += '<table class="matrix-table"><thead><tr><th></th>';
+                
+                labels.forEach(label => {
+                    html += `<th>${label}</th>`;
+                });
+                html += '</tr></thead><tbody>';
+                
+                for (let i = 0; i < 6; i++) {
+                    html += `<tr><td><strong>${labels[i]}</strong></td>`;
+                    for (let j = 0; j < 6; j++) {
+                        const val = kg.get([i, j]);
+                        html += `<td>${formatNumber(val)}</td>`;
+                    }
+                    html += '</tr>';
+                }
+                html += '</tbody></table>';
+                html += `</div>`;
+            });
+            
+            html += '<div class="results"><h3>🗺️ Pemetaan DOF</h3>';
+            html += '<table class="matrix-table"><thead><tr><th>Node</th><th>θx (DOF)</th><th>θy (DOF)</th><th>w (DOF)</th></tr></thead><tbody>';
+            results.sortedNodes.forEach(node => {
+                const dofs = results.dofMap[node];
+                html += `<tr>
+                    <td><strong>Node ${node}</strong></td>
+                    <td>${dofs.theta_x}</td>
+                    <td>${dofs.theta_y}</td>
+                    <td>${dofs.w}</td>
+                </tr>`;
+            });
+            html += '</tbody></table></div>';
+            
+            html += '<div class="results"><h3>📊 Displacement</h3>';
+            html += '<table class="matrix-table"><thead><tr><th>DOF</th><th>Nilai</th><th>Status</th></tr></thead><tbody>';
+            
+            results.sortedNodes.forEach(node => {
+                const dofs = results.dofMap[node];
+                ['theta_x', 'theta_y', 'w'].forEach(type => {
+                    const dofIdx = dofs[type];
+                    const val = results.d.get([dofIdx]);
+                    const status = results.freeDofs.includes(dofIdx) ? 'FREE' : 'FIXED';
+                    const label = type === 'theta_x' ? `θx${node}` : type === 'theta_y' ? `θy${node}` : `w${node}`;
+                    html += `<tr><td>${label}</td><td>${formatNumber(val)}</td><td>${status}</td></tr>`;
+                });
+            });
+            html += '</tbody></table></div>';
+            
+            html += '<div class="results"><h3>⚡ Reaksi Tumpuan</h3>';
+            html += '<table class="matrix-table"><thead><tr><th>DOF</th><th>Reaksi (kN atau kNm)</th></tr></thead><tbody>';
+            
+            results.fixedDofs.forEach((dofIdx, i) => {
+                const node = results.sortedNodes.find(n => 
+                    results.dofMap[n].theta_x === dofIdx || 
+                    results.dofMap[n].theta_y === dofIdx || 
+                    results.dofMap[n].w === dofIdx
+                );
+                const dofType = results.dofMap[node].theta_x === dofIdx ? 'θx' : 
+                                results.dofMap[node].theta_y === dofIdx ? 'θy' : 'w';
+                const label = `${dofType}${node}`;
+                const reactionVal = results.F_s.get([i, 0]);
+                html += `<tr><td>${label}</td><td>${formatNumber(reactionVal)}</td></tr>`;
+            });
+            html += '</tbody></table></div>';
+            
+            // GAYA DALAM
+            html += '<div class="results"><h3>🔧 Gaya Dalam (Internal Forces)</h3>';
+            results.internalForces.forEach(force => {
+                const elem = elements.find(e => e.id === force.elementId);
+                html += `<div class="force-card">
+                    <h5>Elemen ${force.elementId} (Node ${elem.node_i} → ${elem.node_j})</h5>
+                    <table class="matrix-table">
+                        <thead>
+                            <tr>
+                                <th>Posisi</th>
+                                <th>Mx (kNm)</th>
+                                <th>My (kNm)</th>
+                                <th>Vy (kN)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Node ${elem.node_i} (i)</strong></td>
+                                <td>${formatNumber(force.Mx_i)}</td>
+                                <td>${formatNumber(force.My_i)}</td>
+                                <td>${formatNumber(force.Vy_i)}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Node ${elem.node_j} (j)</strong></td>
+                                <td>${formatNumber(force.Mx_j)}</td>
+                                <td>${formatNumber(force.My_j)}</td>
+                                <td>${formatNumber(force.Vy_j)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>`;
+            });
+            html += '</div>';
+            
+            // DIAGRAM GAYA GESER DAN MOMEN
+            html += '<div class="results"><h3>📈 Diagram Gaya Geser</h3>';
+            results.internalForces.forEach(force => {
+                const elem = elements.find(e => e.id === force.elementId);
+                html += `<div class="diagram-container">
+                    <h4>Elemen ${force.elementId}</h4>
+                    <canvas id="shear_${force.elementId}" width="800" height="300"></canvas>
+                </div>`;
+            });
+            html += '</div>';
+            
+            html += '<div class="results"><h3>📉 Diagram Momen Lentur</h3>';
+            results.internalForces.forEach(force => {
+                const elem = elements.find(e => e.id === force.elementId);
+                html += `<div class="diagram-container">
+                    <h4>Elemen ${force.elementId}</h4>
+                    <canvas id="moment_${force.elementId}" width="800" height="300"></canvas>
+                </div>`;
+            });
+            html += '</div>';
+            
+            html += '<div class="results"><h3>🔢 Matriks Kekakuan Global Lengkap (Kg)</h3>';
+            html += '<table class="matrix-table"><thead><tr><th>DOF</th>';
+            
+            for (let j = 0; j < results.totalDofs; j++) {
+                const label = getDOFLabel(j, results.dofMap, results.sortedNodes);
+                html += `<th>${label}</th>`;
+            }
+            html += '</tr></thead><tbody>';
+            
+            for (let i = 0; i < results.totalDofs; i++) {
+                const rowLabel = getDOFLabel(i, results.dofMap, results.sortedNodes);
+                html += `<tr><td><strong>${rowLabel}</strong></td>`;
+                for (let j = 0; j < results.totalDofs; j++) {
+                    const val = results.Kg.get([i, j]);
+                    html += `<td>${formatNumber(val)}</td>`;
+                }
+                html += '</tr>';
+            }
+            html += '</tbody></table></div>';
+            
+            html += '<div class="results"><h3>🎯 Vektor Beban (F)</h3>';
+            html += '<table class="matrix-table"><thead><tr><th>DOF</th><th>Beban</th></tr></thead><tbody>';
+            for (let i = 0; i < results.totalDofs; i++) {
+                const label = getDOFLabel(i, results.dofMap, results.sortedNodes);
+                html += `<tr><td>${label}</td><td>${formatNumber(results.F.get([i]))}</td></tr>`;
+            }
+            html += '</tbody></table></div>';
+            
+            container.innerHTML = html;
+            
+            // Draw diagrams
+            setTimeout(() => {
+                results.internalForces.forEach(force => {
+                    const elem = elements.find(e => e.id === force.elementId);
+                    const loading = loadings.find(l => l.element_id === force.elementId);
+                    drawShearDiagram(force.elementId, elem, force, loading);
+                    drawMomentDiagram(force.elementId, elem, force, loading);
+                });
+            }, 100);
+        }
+        
+        function drawShearDiagram(elementId, elem, forces, loading) {
+            const canvas = document.getElementById(`shear_${elementId}`);
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const width = 800;
+            const height = 300;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            const margin = 60;
+            const plotWidth = width - 2 * margin;
+            const plotHeight = height - 2 * margin;
+            
+            // Draw axes
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(margin, height - margin);
+            ctx.lineTo(width - margin, height - margin);
+            ctx.stroke();
+            
+            // Calculate shear values
+            const L = elem.L;
+            const V_i = forces.Vy_i;
+            const V_j = forces.Vy_j;
+            
+            let q = 0;
+            if (loading && loading.distributed) {
+                q = loading.distributed;
+            }
+            
+            const scale = plotHeight / (Math.max(Math.abs(V_i), Math.abs(V_j), Math.abs(q * L / 2)) * 1.5);
+            
+            // Draw shear diagram
+            ctx.strokeStyle = '#dc3545';
+            ctx.fillStyle = 'rgba(220, 53, 69, 0.2)';
+            ctx.lineWidth = 2;
+            
+            ctx.beginPath();
+            ctx.moveTo(margin, height - margin - V_i * scale);
+            
+            if (q !== 0) {
+                // Linear for distributed load
+                for (let x = 0; x <= plotWidth; x += 5) {
+                    const pos = (x / plotWidth) * L;
+                    const V = V_i + q * pos;
+                    ctx.lineTo(margin + x, height - margin - V * scale);
+                }
+            } else {
+                ctx.lineTo(width - margin, height - margin - V_j * scale);
+            }
+            
+            ctx.lineTo(width - margin, height - margin);
+            ctx.lineTo(margin, height - margin);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            
+            // Labels
+            ctx.fillStyle = '#000';
+            ctx.font = '14px Arial';
+            ctx.fillText(`V = ${formatNumber(V_i)} kN`, margin + 5, height - margin - V_i * scale - 10);
+            ctx.fillText(`V = ${formatNumber(V_j)} kN`, width - margin - 80, height - margin - V_j * scale - 10);
+            ctx.fillText('Gaya Geser (kN)', width / 2 - 60, 20);
+            ctx.fillText(`L = ${formatNumber(L)} m`, width / 2 - 40, height - 20);
+        }
+        
+        function drawMomentDiagram(elementId, elem, forces, loading) {
+            const canvas = document.getElementById(`moment_${elementId}`);
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const width = 800;
+            const height = 300;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            const margin = 60;
+            const plotWidth = width - 2 * margin;
+            const plotHeight = height - 2 * margin;
+            
+            // Draw axes
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(margin, height - margin);
+            ctx.lineTo(width - margin, height - margin);
+            ctx.stroke();
+            
+            // Calculate moment values
+            const L = elem.L;
+            const M_i = forces.My_i;
+            const M_j = forces.My_j;
+            const V_i = forces.Vy_i;
+            
+            let q = 0;
+            if (loading && loading.distributed) {
+                q = loading.distributed;
+            }
+            
+            // Find maximum moment
+            let maxM = Math.max(Math.abs(M_i), Math.abs(M_j));
+            
+            // Calculate moment at various points
+            const moments = [];
+            for (let x = 0; x <= L; x += L / 50) {
+                let M = M_i + V_i * x + 0.5 * q * x * x;
+                moments.push(Math.abs(M));
+                maxM = Math.max(maxM, Math.abs(M));
+            }
+            
+            const scale = plotHeight / (maxM * 1.5);
+            
+            // Draw moment diagram
+            ctx.strokeStyle = '#007bff';
+            ctx.fillStyle = 'rgba(0, 123, 255, 0.2)';
+            ctx.lineWidth = 2;
+            
+            ctx.beginPath();
+            ctx.moveTo(margin, height - margin);
+            
+            for (let i = 0; i <= 50; i++) {
+                const x = (i / 50) * L;
+                const xPixel = margin + (i / 50) * plotWidth;
+                const M = M_i + V_i * x + 0.5 * q * x * x;
+                ctx.lineTo(xPixel, height - margin - M * scale);
+            }
+            
+            ctx.lineTo(width - margin, height - margin);
+            ctx.lineTo(margin, height - margin);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+            
+            // Labels
+            ctx.fillStyle = '#000';
+            ctx.font = '14px Arial';
+            ctx.fillText(`M = ${formatNumber(M_i)} kNm`, margin + 5, height - margin - M_i * scale - 10);
+            ctx.fillText(`M = ${formatNumber(M_j)} kNm`, width - margin - 90, height - margin - M_j * scale - 10);
+            ctx.fillText('Momen Lentur (kNm)', width / 2 - 70, 20);
+            ctx.fillText(`L = ${formatNumber(L)} m`, width / 2 - 40, height - 20);
+        }
+        
+        async function exportResults() {
+            if (!analysisResults) {
+                alert('Jalankan analisis terlebih dahulu!');
+                return;
+            }
+            
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            
+            let yPos = 20;
+            const lineHeight = 7;
+            const pageHeight = pdf.internal.pageSize.height;
+            const pageWidth = pdf.internal.pageSize.width;
+            const margin = 15;
+            
+            function checkPageBreak(needed = 10) {
+                if (yPos + needed > pageHeight - 20) {
+                    pdf.addPage();
+                    yPos = 20;
+                    return true;
+                }
+                return false;
+            }
+            
+            // Title
+            pdf.setFontSize(18);
+            pdf.setFont(undefined, 'bold');
+            pdf.text('GRID SYSTEM ANALYZER', pageWidth / 2, yPos, { align: 'center' });
+            yPos += 10;
+            pdf.setFontSize(12);
+            pdf.text('Hasil Analisis Struktur Grid', pageWidth / 2, yPos, { align: 'center' });
+            yPos += 15;
+            
+            // Summary
+            pdf.setFontSize(14);
+            pdf.setFont(undefined, 'bold');
+            pdf.text('RINGKASAN', margin, yPos);
+            yPos += lineHeight;
+            
+            pdf.setFontSize(10);
+            pdf.setFont(undefined, 'normal');
+            pdf.text(`Total DOF: ${analysisResults.totalDofs}`, margin, yPos);
+            yPos += lineHeight;
+            pdf.text(`DOF Bebas: ${analysisResults.freeDofs.length}`, margin, yPos);
+            yPos += lineHeight;
+            pdf.text(`DOF Terkekang: ${analysisResults.fixedDofs.length}`, margin, yPos);
+            yPos += lineHeight;
+            pdf.text(`Jumlah Elemen: ${elements.length}`, margin, yPos);
+            yPos += 10;
+            
+            // Element Properties
+            checkPageBreak(30);
+            pdf.setFontSize(14);
+            pdf.setFont(undefined, 'bold');
+            pdf.text('PROPERTI ELEMEN', margin, yPos);
+            yPos += lineHeight;
+            
+            pdf.setFontSize(9);
+            pdf.setFont(undefined, 'normal');
+            elements.forEach(elem => {
+                checkPageBreak(20);
+                pdf.text(`Elemen ${elem.id} (Node ${elem.node_i} -> ${elem.node_j}):`, margin, yPos);
+                yPos += lineHeight;
+                pdf.text(`  Alpha = ${formatNumber(elem.alpha)} deg, L = ${formatNumber(elem.L)} m`, margin + 5, yPos);
+                yPos += lineHeight;
+                pdf.text(`  b = ${formatNumber(elem.b)} m, h = ${formatNumber(elem.h)} m`, margin + 5, yPos);
+                yPos += lineHeight;
+                pdf.text(`  Beta = ${formatNumber(elem.beta)}, A = ${formatNumber(elem.A)} m2`, margin + 5, yPos);
+                yPos += lineHeight;
+                pdf.text(`  Ix = ${formatNumber(elem.Ix)} m4, Iy = ${formatNumber(elem.Iy)} m4`, margin + 5, yPos);
+                yPos += lineHeight + 2;
+            });
+            
+            // DOF Mapping
+            checkPageBreak(30);
+            pdf.setFontSize(14);
+            pdf.setFont(undefined, 'bold');
+            pdf.text('PEMETAAN DOF', margin, yPos);
+            yPos += lineHeight;
+            
+            pdf.setFontSize(9);
+            pdf.setFont(undefined, 'normal');
+            analysisResults.sortedNodes.forEach(node => {
+                checkPageBreak(10);
+                const dofs = analysisResults.dofMap[node];
+                pdf.text(`Node ${node}: theta_x=${dofs.theta_x}, theta_y=${dofs.theta_y}, w=${dofs.w}`, margin, yPos);
+                yPos += lineHeight;
+            });
+            yPos += 5;
+            
+            // Displacement
+            checkPageBreak(30);
+            pdf.setFontSize(14);
+            pdf.setFont(undefined, 'bold');
+            pdf.text('DISPLACEMENT', margin, yPos);
+            yPos += lineHeight;
+            
+            pdf.setFontSize(9);
+            pdf.setFont(undefined, 'normal');
+            analysisResults.sortedNodes.forEach(node => {
+                const dofs = analysisResults.dofMap[node];
+                ['theta_x', 'theta_y', 'w'].forEach(type => {
+                    checkPageBreak(8);
+                    const dofIdx = dofs[type];
+                    const val = analysisResults.d.get([dofIdx]);
+                    const label = type === 'theta_x' ? `theta_x${node}` : type === 'theta_y' ? `theta_y${node}` : `w${node}`;
+                    const status = analysisResults.freeDofs.includes(dofIdx) ? 'FREE' : 'FIXED';
+                    pdf.text(`${label} = ${formatNumber(val)} (${status})`, margin, yPos);
+                    yPos += lineHeight;
+                });
+            });
+            yPos += 5;
+            
+            // Reactions
+            checkPageBreak(30);
+            pdf.setFontSize(14);
+            pdf.setFont(undefined, 'bold');
+            pdf.text('REAKSI TUMPUAN', margin, yPos);
+            yPos += lineHeight;
+            
+            pdf.setFontSize(9);
+            pdf.setFont(undefined, 'normal');
+            analysisResults.fixedDofs.forEach((dofIdx, i) => {
+                checkPageBreak(8);
+                const node = analysisResults.sortedNodes.find(n => 
+                    analysisResults.dofMap[n].theta_x === dofIdx || 
+                    analysisResults.dofMap[n].theta_y === dofIdx || 
+                    analysisResults.dofMap[n].w === dofIdx
+                );
+                const dofType = analysisResults.dofMap[node].theta_x === dofIdx ? 'theta_x' : 
+                                analysisResults.dofMap[node].theta_y === dofIdx ? 'theta_y' : 'w';
+                const label = `${dofType}${node}`;
+                const reactionVal = analysisResults.F_s.get([i, 0]);
+                pdf.text(`${label} = ${formatNumber(reactionVal)} kN/kNm`, margin, yPos);
+                yPos += lineHeight;
+            });
+            yPos += 5;
+            
+            // Internal Forces
+            checkPageBreak(30);
+            pdf.setFontSize(14);
+            pdf.setFont(undefined, 'bold');
+            pdf.text('GAYA DALAM (INTERNAL FORCES)', margin, yPos);
+            yPos += lineHeight;
+            
+            pdf.setFontSize(9);
+            pdf.setFont(undefined, 'normal');
+            analysisResults.internalForces.forEach(force => {
+                checkPageBreak(25);
+                const elem = elements.find(e => e.id === force.elementId);
+                pdf.text(`Elemen ${force.elementId} (Node ${elem.node_i} -> ${elem.node_j}):`, margin, yPos);
+                yPos += lineHeight;
+                pdf.text(`  Node ${elem.node_i} (i): Mx=${formatNumber(force.Mx_i)} kNm, My=${formatNumber(force.My_i)} kNm, Vy=${formatNumber(force.Vy_i)} kN`, margin + 5, yPos);
+                yPos += lineHeight;
+                pdf.text(`  Node ${elem.node_j} (j): Mx=${formatNumber(force.Mx_j)} kNm, My=${formatNumber(force.My_j)} kNm, Vy=${formatNumber(force.Vy_j)} kN`, margin + 5, yPos);
+                yPos += lineHeight + 2;
+            });
+            
+            // Diagrams
+            pdf.addPage();
+            yPos = 20;
+            pdf.setFontSize(14);
+            pdf.setFont(undefined, 'bold');
+            pdf.text('DIAGRAM GAYA GESER DAN MOMEN', margin, yPos);
+            yPos += 10;
+            
+            for (let force of analysisResults.internalForces) {
+                checkPageBreak(80);
+                
+                const elem = elements.find(e => e.id === force.elementId);
+                pdf.setFontSize(12);
+                pdf.text(`Elemen ${force.elementId}`, margin, yPos);
+                yPos += 5;
+                
+                // Shear diagram
+                const shearCanvas = document.getElementById(`shear_${force.elementId}`);
+                if (shearCanvas) {
+                    const shearImg = shearCanvas.toDataURL('image/png');
+                    pdf.addImage(shearImg, 'PNG', margin, yPos, 180, 40);
+                    yPos += 45;
+                }
+                
+                // Moment diagram
+                const momentCanvas = document.getElementById(`moment_${force.elementId}`);
+                if (momentCanvas) {
+                    const momentImg = momentCanvas.toDataURL('image/png');
+                    pdf.addImage(momentImg, 'PNG', margin, yPos, 180, 40);
+                    yPos += 50;
+                }
+            }
+            
+            // Save PDF
+            pdf.save('grid_analysis_results.pdf');
+        }
+        
+        window.addEventListener('load', () => {
+            generateElementInputs();
+        });
+    </script>
+</body>
+</html>
